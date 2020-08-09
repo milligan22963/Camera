@@ -1,0 +1,225 @@
+pi@raspberrypi:~/Development/Camera $ raspistill --help
+
+"raspistill" Camera App (commit a246147c21ae Tainted)
+
+Runs camera for specific time, and take JPG capture at end if requested
+
+usage: raspistill [options]
+
+Image parameter commands
+
+-q, --quality	: Set jpeg quality <0 to 100>
+-r, --raw	: Add raw bayer data to jpeg metadata
+-l, --latest	: Link latest complete image to filename <filename>
+-t, --timeout	: Time (in ms) before takes picture and shuts down (if not specified, set to 5s)
+-th, --thumb	: Set thumbnail parameters (x:y:quality) or none
+-d, --demo	: Run a demo mode (cycle through range of camera options, no capture)
+-e, --encoding	: Encoding to use for output file (jpg, bmp, gif, png)
+-x, --exif	: EXIF tag to apply to captures (format as 'key=value') or none
+-tl, --timelapse	: Timelapse mode. Takes a picture every <t>ms. %d == frame number (Try: -o img_%04d.jpg)
+-fp, --fullpreview	: Run the preview using the still capture resolution (may reduce preview fps)
+-k, --keypress	: Wait between captures for a ENTER, X then ENTER to exit
+-s, --signal	: Wait between captures for a SIGUSR1 or SIGUSR2 from another process
+-g, --gl	: Draw preview to texture instead of using video render component
+-gc, --glcapture	: Capture the GL frame-buffer instead of the camera image
+-bm, --burst	: Enable 'burst capture mode'
+-dt, --datetime	: Replace output pattern (%d) with DateTime (MonthDayHourMinSec)
+-ts, --timestamp	: Replace output pattern (%d) with unix timestamp (seconds since 1970)
+-fs, --framestart	: Starting frame number in output pattern(%d)
+-rs, --restart	: JPEG Restart interval (default of 0 for none)
+
+GL parameter commands
+
+-gs, --glscene	: GL scene square,teapot,mirror,yuv,sobel,vcsm_square
+-gw, --glwin	: GL window settings <'x,y,w,h'>
+
+Common Settings commands
+
+-?, --help	: This help information
+-w, --width	: Set image width <size>
+-h, --height	: Set image height <size>
+-o, --output	: Output filename <filename> (to write to stdout, use '-o -'). If not specified, no file is saved
+-v, --verbose	: Output verbose information during run
+-cs, --camselect	: Select camera <number>. Default 0
+-md, --mode	: Force sensor mode. 0=auto. See docs for other modes available
+-gps, --gpsdexif	: Apply real-time GPS information to output (e.g. EXIF in JPG, annotation in video (requires libgps.so.23)
+
+Preview parameter commands
+
+-p, --preview	: Preview window settings <'x,y,w,h'>
+-f, --fullscreen	: Fullscreen preview mode
+-op, --opacity	: Preview window opacity (0-255)
+-n, --nopreview	: Do not display a preview window
+-dn, --dispnum	: Display on which to display the preview window (dispmanx/tvservice numbering)
+
+Image parameter commands
+
+-sh, --sharpness	: Set image sharpness (-100 to 100)
+-co, --contrast	: Set image contrast (-100 to 100)
+-br, --brightness	: Set image brightness (0 to 100)
+-sa, --saturation	: Set image saturation (-100 to 100)
+-ISO, --ISO	: Set capture ISO
+-vs, --vstab	: Turn on video stabilisation
+-ev, --ev	: Set EV compensation - steps of 1/6 stop
+-ex, --exposure	: Set exposure mode (see Notes)
+-fli, --flicker	: Set flicker avoid mode (see Notes)
+-awb, --awb	: Set AWB mode (see Notes)
+-ifx, --imxfx	: Set image effect (see Notes)
+-cfx, --colfx	: Set colour effect (U:V)
+-mm, --metering	: Set metering mode (see Notes)
+-rot, --rotation	: Set image rotation (0-359)
+-hf, --hflip	: Set horizontal flip
+-vf, --vflip	: Set vertical flip
+-roi, --roi	: Set region of interest (x,y,w,d as normalised coordinates [0.0-1.0])
+-ss, --shutter	: Set shutter speed in microseconds
+-awbg, --awbgains	: Set AWB gains - AWB mode must be off
+-drc, --drc	: Set DRC Level (see Notes)
+-st, --stats	: Force recomputation of statistics on stills capture pass
+-a, --annotate	: Enable/Set annotate flags or text
+-3d, --stereo	: Select stereoscopic mode
+-dec, --decimate	: Half width/height of stereo image
+-3dswap, --3dswap	: Swap camera order for stereoscopic
+-ae, --annotateex	: Set extra annotation parameters (text size, text colour(hex YUV), bg colour(hex YUV), justify, x, y)
+-ag, --analoggain	: Set the analog gain (floating point)
+-dg, --digitalgain	: Set the digital gain (floating point)
+-set, --settings	: Retrieve camera settings and write to stdout
+
+
+Notes
+
+Exposure mode options :
+off,auto,night,nightpreview,backlight,spotlight,sports,snow,beach,verylong,fixedfps,antishake,fireworks
+
+Flicker avoid mode options :
+off,auto,50hz,60hz
+
+AWB mode options :
+off,auto,sun,cloud,shade,tungsten,fluorescent,incandescent,flash,horizon,greyworld
+
+Image Effect mode options :
+none,negative,solarise,sketch,denoise,emboss,oilpaint,hatch,gpen,pastel,watercolour,film,blur,saturation,colourswap,washedout,posterise,colourpoint,colourbalance,cartoon
+
+Metering Mode options :
+average,spot,backlit,matrix
+
+Dynamic Range Compression (DRC) options :
+off,low,med,high
+
+
+#0  0x76162088 in futex_abstimed_wait_cancelable (private=0, abstime=0x0, expected=1, futex_word=0x7631970c <client+40>)
+    at ../sysdeps/unix/sysv/linux/futex-internal.h:205
+#1  0x76162088 in do_futex_wait (sem=sem@entry=0x7631970c <client+40>, abstime=0x0) at sem_waitcommon.c:115
+#2  0x761621f4 in __new_sem_wait_slow (sem=0x7631970c <client+40>, abstime=0x0) at sem_waitcommon.c:282
+#3  0x762fce34 in vcos_semaphore_wait () at /opt/vc/lib/libmmal_vc_client.so
+#4  0x762ff9b4 in mmal_vc_sendwait_message () at /opt/vc/lib/libmmal_vc_client.so
+#5  0x763032ec in mmal_vc_component_destroy () at /opt/vc/lib/libmmal_vc_client.so
+#6  0x7634b928 in mmal_component_destroy_internal () at /opt/vc/lib/libmmal_core.so
+#7  0x7634be70 in mmal_component_release_internal () at /opt/vc/lib/libmmal_core.so
+#8  0x7634bf28 in mmal_component_destroy () at /opt/vc/lib/libmmal_core.so
+#9  0x00016868 in Camera::Shutdown() (this=0x39e4c) at /home/pi/Development/Camera/src/Camera.cpp:314
+#10 0x0001624c in Camera::~Camera() (this=0x39e4c, __in_chrg=<optimized out>)
+    at /home/pi/Development/Camera/src/Camera.cpp:173
+#11 0x00019328 in __gnu_cxx::new_allocator<Camera>::destroy<Camera>(Camera*) (this=0x39e4c, __p=0x39e4c)
+    at /usr/include/c++/8/ext/new_allocator.h:140
+#12 0x000192d0 in std::allocator_traits<std::allocator<Camera> >::destroy<Camera>(std::allocator<Camera>&, Camera*)
+    (__a=..., __p=0x39e4c) at /usr/include/c++/8/bits/alloc_traits.h:487
+#13 0x00019184 in std::_Sp_counted_ptr_inplace<Camera, std::allocator<Camera>, (__gnu_cxx::_Lock_policy)1>::_M_dispose()
+    (this=0x39e28) at /usr/include/c++/8/bits/shared_ptr_base.h:554
+#14 0x000183cc in std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)1>::_M_release() (this=0x39e28)
+    at /usr/include/c++/8/bits/shared_ptr_base.h:155
+#15 0x00018190 in std::__shared_count<(__gnu_cxx::_Lock_policy)1>::~__shared_count()
+    (this=0x2b198 <Camera::GetInstance()::pCameraInstance+4>, __in_chrg=<optimized out>)
+    at /usr/include/c++/8/bits/shared_ptr_base.h:728
+#16 0x00017fd8 in std::__shared_ptr<Camera, (__gnu_cxx::_Lock_policy)1>::~__shared_ptr()
+    (this=0x2b194 <Camera::GetInstance()::pCameraInstance>, __in_chrg=<optimized out>)
+    at /usr/include/c++/8/bits/shared_ptr_base.h:1167
+#17 0x00018004 in std::shared_ptr<Camera>::~shared_ptr()
+    (this=0x2b194 <Camera::GetInstance()::pCameraInstance>, __in_chrg=<optimized out>)
+    at /usr/include/c++/8/bits/shared_ptr.h:103
+#18 0x75e3c670 in __run_exit_handlers
+    (status=<optimized out>, listp=<optimized out>, run_list_atexit=run_list_atexit@entry=true, run_dtors=run_dtors@entry=true) at exit.c:108
+#19 0x75e3c798 in __GI_exit (status=<optimized out>) at exit.c:139
+#20 0x75e2571c in __libc_start_main (main=
+    0x7efff604, argc=1979023360, argv=0x75e2571c <__libc_start_main+272>, init=<optimized out>, fini=0x19b08 <__libc_csu_fini>, rtld_fini=0x76fde4c4 <_dl_fini>, stack_end=0x7efff604) at libc-start.c:342
+
+
+pi@raspberrypi:~/Development/Camera $ raspistill -o ~/Desktop/test.jpg -n -v
+
+"raspistill" Camera App (commit a246147c21ae Tainted)
+
+Camera Name imx219
+Width 3280, Height 2464, filename /home/pi/Desktop/test.jpg
+Using camera 0, sensor mode 0
+
+GPS output Disabled
+
+Quality 85, Raw no
+Thumbnail enabled Yes, width 64, height 48, quality 35
+Time delay 5000, Timelapse 0
+Link to latest frame enabled  no
+Full resolution preview No
+Capture method : Single capture
+
+Preview No, Full screen Yes
+Preview window 0,0,1024,768
+Opacity 255
+Sharpness 0, Contrast 0, Brightness 50
+Saturation 0, ISO 0, Video Stabilisation No, Exposure compensation 0
+Exposure Mode 'auto', AWB Mode 'auto', Image Effect 'none'
+Flicker Avoid Mode 'off'
+Metering Mode 'average', Colour Effect Enabled No with U = 128, V = 128
+Rotation 0, hflip No, vflip No
+ROI x 0.000000, y 0.000000, w 1.000000 h 1.000000
+Camera component done
+Encoder component done
+Starting component connection stage
+Connecting camera preview port to video render.
+Connecting camera stills port to encoder input port
+Opening output file /home/pi/Desktop/test.jpg
+Enabling encoder output port
+Starting capture -1
+Finished capture -1
+Closing down
+Close down completed, all components disconnected, disabled and destroyed
+
+pi@raspberrypi:~/Development/Camera $ 
+
+pi@raspberrypi:~ $ raspistill -v -o ~/Desktop/test.jpg 
+
+"raspistill" Camera App (commit a246147c21ae Tainted)
+
+Camera Name imx219
+Width 3280, Height 2464, filename /home/pi/Desktop/test.jpg
+Using camera 0, sensor mode 0
+
+GPS output Disabled
+
+Quality 85, Raw no
+Thumbnail enabled Yes, width 64, height 48, quality 35
+Time delay 5000, Timelapse 0
+Link to latest frame enabled  no
+Full resolution preview No
+Capture method : Single capture
+
+Preview Yes, Full screen Yes
+Preview window 0,0,1024,768
+Opacity 255
+Sharpness 0, Contrast 0, Brightness 50
+Saturation 0, ISO 0, Video Stabilisation No, Exposure compensation 0
+Exposure Mode 'auto', AWB Mode 'auto', Image Effect 'none'
+Flicker Avoid Mode 'off'
+Metering Mode 'average', Colour Effect Enabled No with U = 128, V = 128
+Rotation 0, hflip No, vflip No
+ROI x 0.000000, y 0.000000, w 1.000000 h 1.000000
+Camera component done
+Encoder component done
+Starting component connection stage
+Connecting camera preview port to video render.
+Connecting camera stills port to encoder input port
+Opening output file /home/pi/Desktop/test.jpg
+Enabling encoder output port
+Starting capture -1
+Finished capture -1
+Closing down
+Close down completed, all components disconnected, disabled and destroyed
+
