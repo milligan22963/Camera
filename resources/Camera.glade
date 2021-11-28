@@ -12,7 +12,10 @@
     <property name="default_height">480</property>
     <signal name="destroy" handler="OnWindowMainDestroy" swapped="no"/>
     <child>
-      <placeholder/>
+        <object class="GtkDrawingArea" id="drawing_area">
+          <property name="visible">True</property>
+          <property name="can-focus">False</property>
+        </object>
     </child>
     <child>
       <object class="GtkBox" id="box1">

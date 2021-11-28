@@ -23,7 +23,7 @@ namespace afm
 
                 virtual bool Initialize(const std::string &glade_file) = 0;
                 virtual void Shutdown() = 0;
-                virtual void Run(IAfmWindowSPtr pMainWindow) = 0;
+                virtual void Run() = 0;
                 virtual void ShowWindow(IAfmWindowSPtr pWindow) = 0;
         };
 

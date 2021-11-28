@@ -48,6 +48,12 @@ int main(int argc, char *argv[])
 
     PersistenceSPtr persistence = Persistence::GetInstance();
 
+    LogSPtr pLog = Log::GetInstance();
+
+    if (!pLog->Initialize(LOG_TYPE::LOG_FILE, "/var/log/camera.log", LOG_LEVEL::LOG_INFO)) {
+        std::cout << "Failed to setup log.\n";
+    }
+
     bcm_host_init();
 
     g_p_camera_on = afm::communication::PortFactory::getInstance()->createPort(afm::data::PortType::PORT_GPIO, sc_camera_on, 0);
@@ -66,14 +72,11 @@ int main(int argc, char *argv[])
 
     pGPIO = nullptr;
 
-    // Register our application with the logging system
-    vcos_log_register("AfmCamera", VCOS_LOG_CATEGORY);
-
     gtk_init(&argc, &argv);
 
     if (sem_init(&g_picture_semaphore, 0, 0) != 0)
     {
-        vcos_log_error("Unable to initialize our semaphore for pictures");
+        pLog->Log("Unable to initialize our semaphore for pictures\n", LOG_LEVEL::LOG_LEVEL_ERROR);
         return -1;
     }
 
@@ -83,7 +86,9 @@ int main(int argc, char *argv[])
         if (pApp->Initialize(glade_file) == true) {
             afm::graphic::IAfmWindowSPtr p_main_window = std::make_shared<afm::graphic::MainWindow>();
 
-            pApp->Run(p_main_window);
+            pApp->ShowWindow(p_main_window);
+
+            pApp->Run();
 
             p_main_window = nullptr;
         }
@@ -92,7 +97,7 @@ int main(int argc, char *argv[])
         pApp = nullptr;
     }
 
-    vcos_log_error("Shutting down");
+    pLog->Log("Shutting down\n", LOG_LEVEL::LOG_LEVEL_INFO);
 
     persistence->Shutdown();
 
@@ -131,41 +136,40 @@ void Handle_Interrupt(uint8_t interrupt_triggered)
 {
     // interrupt fired
     sem_post(&g_picture_semaphore);
-    vcos_log_info("Take a picture");
+    Log::GetInstance()->Log("Taking a picture\n", LOG_LEVEL::LOG_LEVEL_INFO);
 }
 
 void CameraThread()
 {
     CameraSPtr pCamera = Camera::GetInstance();
     PersistenceSPtr persistence = Persistence::GetInstance();
+    LogSPtr pLog = Log::GetInstance();
 
     if (pCamera != nullptr) {
         while (g_camera_processing == true) {
             struct timespec camera_timeout;
 
-            if (clock_gettime(CLOCK_REALTIME, &camera_timeout) == -1)
-            {
-                vcos_log_error("Unable to get realtime clock");
+            if (clock_gettime(CLOCK_REALTIME, &camera_timeout) == -1) {
+                pLog->Log("Unable to get realtime clock\n", LOG_LEVEL::LOG_LEVEL_ERROR);
             }
-            
-            vcos_log_info("Waiting....");
+
+            pLog->Log("Waiting\n", LOG_LEVEL::LOG_LEVEL_INFO);
 
             camera_timeout.tv_sec += 1; // wait for 1 second so if picture isn't fired we can come back and check off
-            if (sem_timedwait(&g_picture_semaphore, &camera_timeout) == 0)
-            {
+            if (sem_timedwait(&g_picture_semaphore, &camera_timeout) == 0) {
                 std::string nextFileName = persistence->GetNextImageFileName();
-                vcos_log_error("Taking picture now - %s", nextFileName.c_str());
+
+                pLog->Log("Taking picture now - ", LOG_LEVEL::LOG_LEVEL_INFO);
+                pLog->Log(nextFileName, LOG_LEVEL::LOG_LEVEL_INFO);
+                pLog->Log("\n", LOG_LEVEL::LOG_LEVEL_INFO);
+
                 //pCamera->TakePicture(persistence->GetNextImageFileName());
                 pCamera->TakePicture(nextFileName);
-            }
-            else
-            {
-                vcos_log_info("Timedout");
+            } else {
+                pLog->Log("Timedout\n", LOG_LEVEL::LOG_LEVEL_INFO);
             }
         }
-    }
-    else
-    {
-        vcos_log_error("Unable to create camera.");
+    } else {
+        pLog->Log("Unable to create camera.\n", LOG_LEVEL::LOG_LEVEL_ERROR);
     }
 }

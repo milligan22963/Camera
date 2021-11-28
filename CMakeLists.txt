@@ -67,6 +67,7 @@ set(SRC_FILES
     src/AboutDialog.cpp
     src/PreferencesDialog.cpp
     src/MainWindow.cpp
+    src/sdl_renderer.c
 )
 
 add_executable (AfmCamera ${SRC_FILES} ${COMMON_SOURCES} ${EGL_SOURCES} ${GL_SCENE_SOURCES})

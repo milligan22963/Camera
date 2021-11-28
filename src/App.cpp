@@ -52,12 +52,8 @@ namespace afm
             }
         }
 
-        void App::Run(IAfmWindowSPtr pMainWindow)
+        void App::Run()
         {
-            if (pMainWindow->Initialize(m_p_builder) == true) {
-                pMainWindow->Show();
-            }
-
             gtk_main();
         }
 

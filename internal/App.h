@@ -21,7 +21,7 @@ namespace afm
 
                 virtual bool Initialize(const std::string &glade_file) override;
                 virtual void Shutdown() override;
-                virtual void Run(IAfmWindowSPtr pMainWindow) override;
+                virtual void Run() override;
                 virtual void ShowWindow(IAfmWindowSPtr pWindow) override;
 
             private:

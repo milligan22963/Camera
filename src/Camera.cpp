@@ -578,7 +578,8 @@ bool Camera::ConfigurePreview(bool use_null_sink)
     }
     else
     {
-        if (mmal_component_create(MMAL_COMPONENT_DEFAULT_VIDEO_RENDERER, &m_ppreview) != MMAL_SUCCESS)
+        // if (mmal_component_create(MMAL_COMPONENT_DEFAULT_VIDEO_RENDERER, &m_ppreview) != MMAL_SUCCESS)
+        if (mmal_component_create("vc.afmsdl", &m_ppreview) != MMAL_SUCCESS)
         {
             success = false;
         }
@@ -867,7 +868,6 @@ void Camera::DefaultEncoderBufferCallback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_
     if (done == true)
     {
         sem_post(&m_camera_semaphore);
-//        vcos_semaphore_post(&m_camera_semaphore);
     }
 }
 
