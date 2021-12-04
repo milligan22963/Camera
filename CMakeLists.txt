@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.6)
 
+project(AfmCamera)
+
 # Debug specifics
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 
@@ -14,8 +16,9 @@ set (CMAKE_CXX_STANDARD 14)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
 
-set (USERLAND_ROOT /home/pi/project/userland)
-set (MMAL_INCLUDE ${USERLAND_ROOT}/interface)
+set (USERLAND_ROOT /opt/vc/include)
+set (INTERFACE_ROOT ${USERLAND_ROOT}/interface)
+set (MMAL_INCLUDE ${USERLAND_ROOT}/interface/mmal)
 set (EGL_ROOT ${USERLAND_ROOT}/host_applications/linux/apps/raspicam)
 
 # Output for install
@@ -32,6 +35,7 @@ include_directories (
     internal
     ${GTK3_INCLUDE_DIRS}
     ${USERLAND_ROOT}
+    ${INTERFACE_ROOT}
     ${USERLAND_ROOT}/host_applications/linux/libs/bcm_host/include
     ${USERLAND_ROOT}/host_applications/linux/libs/sm
     ${MMAL_INCLUDE}

@@ -25,10 +25,10 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "mmal.h"
-#include "mmal_logging.h"
-#include "core/mmal_component_private.h"
-#include "core/mmal_port_private.h"
+#include "mmal/mmal.h"
+#include "mmal/mmal_logging.h"
+#include "mmal/core/mmal_component_private.h"
+#include "mmal/core/mmal_port_private.h"
 
 #include <SDL/SDL.h>
 
