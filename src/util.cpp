@@ -73,22 +73,23 @@ const std::string LOG_LEVEL_STRINGS[]={
     "FATAL: ",
     "INVALID"
 };
+std::shared_ptr<Logger> Logger::m_logInstance = nullptr;
 
-Log::Log()
+Logger::Logger()
     : m_logLevel(LOG_LEVEL::LOG_LEVEL_ERROR)
     , m_logType(LOG_TYPE::LOG_SYSLOG)
 {
     // if anything else is needed
 }
 
-Log::~Log()
+Logger::~Logger()
 {
     if (m_logFile.is_open()) {
         m_logFile.close();
     }
 }
 
-bool Log::InitializeLog(LOG_TYPE type, const std::string &name, LOG_LEVEL minimumLevel)
+bool Logger::InitializeLog(LOG_TYPE type, const std::string &name, LOG_LEVEL minimumLevel)
 {
     bool success = true;
 
@@ -97,7 +98,7 @@ bool Log::InitializeLog(LOG_TYPE type, const std::string &name, LOG_LEVEL minimu
     m_name = name;
 
     if (m_logType & LOG_TYPE::LOG_FILE) {
-        m_logFile.open(m_name, iso_base::ate | iso_base::out);
+        m_logFile.open(m_name, std::ios_base::ate | std::ios_base::out);
         if (!m_logFile.is_open()) {
             success = false;
         }
@@ -105,7 +106,7 @@ bool Log::InitializeLog(LOG_TYPE type, const std::string &name, LOG_LEVEL minimu
     return success;
 }
 
-void Log::Log(const std::string &message, LOG_LEVEL level)
+void Logger::Log(const std::string &message, LOG_LEVEL level)
 {
     if (level > m_logLevel) {
         if (level > LOG_LEVEL::END_LOG_LEVELS) {

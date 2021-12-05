@@ -30,7 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "mmal/core/mmal_component_private.h"
 #include "mmal/core/mmal_port_private.h"
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 #define NUM_PORTS_INPUT 1
 #define SDL_WIDTH 800
@@ -43,7 +43,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 static SDL_Window *sdl_window = NULL;
 static SDL_Renderer *sdl_renderer = NULL;
 
-static afmsdl_set_target_window(void *pTargetWindow)
+static void afmsdl_set_target_window(void *pTargetWindow)
 {
     if(!sdl_window) {
         sdl_window = SDL_CreateWindowFrom(pTargetWindow);
@@ -105,7 +105,7 @@ static MMAL_STATUS_T afmsdl_component_destroy(MMAL_COMPONENT_T *component)
    if(module->thread)
       SDL_WaitThread(module->thread, NULL);
 
-   SDL_Quit(SDL_INIT_VIDEO);
+   SDL_Quit();
 
    if(component->input_num) mmal_ports_free(component->input, 1);
    if(module->queue) mmal_queue_destroy(module->queue);
@@ -226,9 +226,9 @@ static MMAL_BOOL_T afmsdl_do_processing(MMAL_COMPONENT_T *component)
 
    SDL_Texture *pTargetTexture = SDL_GetRenderTarget(sdl_renderer);
 
-   SDL_UpdateTexture(sdl_renderer,
+   SDL_UpdateTexture(pTargetTexture,
                       NULL,
-                      buffer->type->video.offset, src_pitch);
+                      buffer->type->video.offset, 800);
 
 /*   int textureUpdate = SDL_UpdateYUVTexture(pTargetTexture, NULL,
                      buffer->type->video.offset[0], src_pitch,
@@ -299,7 +299,7 @@ static MMAL_STATUS_T mmal_component_create_afmsdl(const char *name, MMAL_COMPONE
    if(strcmp(name, "afmsdl." MMAL_VIDEO_RENDER))
       return MMAL_ENOENT;
 
-   if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_EVENTTHREAD|SDL_INIT_NOPARACHUTE) < 0)
+   if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
       return MMAL_ENXIO;
 
    /* Allocate our module context */
@@ -330,7 +330,7 @@ static MMAL_STATUS_T mmal_component_create_afmsdl(const char *name, MMAL_COMPONE
    component->priv->pf_destroy = afmsdl_component_destroy;
 
    /* Create a thread to monitor SDL events */
-   module->thread = SDL_CreateThread(afmsdl_event_thread, component);
+   module->thread = SDL_CreateThread(afmsdl_event_thread, "afmsdl_event_thread", component);
 
    status = mmal_component_action_register(component, afmsdl_do_processing_loop);
    if (status != MMAL_SUCCESS)

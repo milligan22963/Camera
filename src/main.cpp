@@ -5,6 +5,7 @@
  */
 
 #include <atomic>
+#include <iostream>
 #include <string>
 #include <thread>
 #include <gtk/gtk.h>
@@ -48,9 +49,9 @@ int main(int argc, char *argv[])
 
     PersistenceSPtr persistence = Persistence::GetInstance();
 
-    LogSPtr pLog = Log::GetInstance();
+    LogSPtr pLog = Logger::GetInstance();
 
-    if (!pLog->Initialize(LOG_TYPE::LOG_FILE, "/var/log/camera.log", LOG_LEVEL::LOG_INFO)) {
+    if (!pLog->InitializeLog(Logger::LOG_TYPE::LOG_FILE, "/var/log/camera.log", Logger::LOG_LEVEL::LOG_LEVEL_INFO)) {
         std::cout << "Failed to setup log.\n";
     }
 
@@ -76,7 +77,7 @@ int main(int argc, char *argv[])
 
     if (sem_init(&g_picture_semaphore, 0, 0) != 0)
     {
-        pLog->Log("Unable to initialize our semaphore for pictures\n", LOG_LEVEL::LOG_LEVEL_ERROR);
+        pLog->Log("Unable to initialize our semaphore for pictures\n", Logger::LOG_LEVEL::LOG_LEVEL_ERROR);
         return -1;
     }
 
@@ -97,7 +98,7 @@ int main(int argc, char *argv[])
         pApp = nullptr;
     }
 
-    pLog->Log("Shutting down\n", LOG_LEVEL::LOG_LEVEL_INFO);
+    pLog->Log("Shutting down\n", Logger::LOG_LEVEL::LOG_LEVEL_INFO);
 
     persistence->Shutdown();
 
@@ -136,40 +137,40 @@ void Handle_Interrupt(uint8_t interrupt_triggered)
 {
     // interrupt fired
     sem_post(&g_picture_semaphore);
-    Log::GetInstance()->Log("Taking a picture\n", LOG_LEVEL::LOG_LEVEL_INFO);
+    Logger::GetInstance()->Log("Taking a picture\n", Logger::LOG_LEVEL::LOG_LEVEL_INFO);
 }
 
 void CameraThread()
 {
     CameraSPtr pCamera = Camera::GetInstance();
     PersistenceSPtr persistence = Persistence::GetInstance();
-    LogSPtr pLog = Log::GetInstance();
+    LogSPtr pLog = Logger::GetInstance();
 
     if (pCamera != nullptr) {
         while (g_camera_processing == true) {
             struct timespec camera_timeout;
 
             if (clock_gettime(CLOCK_REALTIME, &camera_timeout) == -1) {
-                pLog->Log("Unable to get realtime clock\n", LOG_LEVEL::LOG_LEVEL_ERROR);
+                pLog->Log("Unable to get realtime clock\n", Logger::LOG_LEVEL::LOG_LEVEL_ERROR);
             }
 
-            pLog->Log("Waiting\n", LOG_LEVEL::LOG_LEVEL_INFO);
+            pLog->Log("Waiting\n", Logger::LOG_LEVEL::LOG_LEVEL_INFO);
 
             camera_timeout.tv_sec += 1; // wait for 1 second so if picture isn't fired we can come back and check off
             if (sem_timedwait(&g_picture_semaphore, &camera_timeout) == 0) {
                 std::string nextFileName = persistence->GetNextImageFileName();
 
-                pLog->Log("Taking picture now - ", LOG_LEVEL::LOG_LEVEL_INFO);
-                pLog->Log(nextFileName, LOG_LEVEL::LOG_LEVEL_INFO);
-                pLog->Log("\n", LOG_LEVEL::LOG_LEVEL_INFO);
+                pLog->Log("Taking picture now - ", Logger::LOG_LEVEL::LOG_LEVEL_INFO);
+                pLog->Log(nextFileName, Logger::LOG_LEVEL::LOG_LEVEL_INFO);
+                pLog->Log("\n", Logger::LOG_LEVEL::LOG_LEVEL_INFO);
 
                 //pCamera->TakePicture(persistence->GetNextImageFileName());
                 pCamera->TakePicture(nextFileName);
             } else {
-                pLog->Log("Timedout\n", LOG_LEVEL::LOG_LEVEL_INFO);
+                pLog->Log("Timedout\n", Logger::LOG_LEVEL::LOG_LEVEL_INFO);
             }
         }
     } else {
-        pLog->Log("Unable to create camera.\n", LOG_LEVEL::LOG_LEVEL_ERROR);
+        pLog->Log("Unable to create camera.\n", Logger::LOG_LEVEL::LOG_LEVEL_ERROR);
     }
 }

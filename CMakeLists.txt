@@ -72,6 +72,7 @@ set(SRC_FILES
     src/PreferencesDialog.cpp
     src/MainWindow.cpp
     src/sdl_renderer.c
+    src/util.cpp
 )
 
 add_executable (AfmCamera ${SRC_FILES} ${COMMON_SOURCES} ${EGL_SOURCES} ${GL_SCENE_SOURCES})
@@ -99,6 +100,7 @@ target_link_libraries(
     X11
     m
     dl
+    SDL2
     pthread
 )
 

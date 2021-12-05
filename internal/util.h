@@ -6,7 +6,7 @@
 #define _H_CAMERA_UTILITIES
 
 #include <memory>
-#include <stream>
+#include <fstream>
 #include <string>
 #include <gtk/gtk.h>
 #include <X11/Xlib.h>
@@ -15,7 +15,7 @@ GtkWidget*  CreateWindowWithGlade(const std::string &glade_file, const std::stri
 void        HideCursor(GtkWidget *p_window);
 void        MoveCursor(int x, int y);
 
-class Log {
+class Logger {
     public:
         enum LOG_LEVEL {
             LOG_LEVEL_DEBUG         = 0x00,
@@ -35,12 +35,12 @@ class Log {
             END_LOG_TYPES
         };
         
-        Log();
-        virtual ~Log();
+        Logger();
+        virtual ~Logger();
 
-        static std::shared_ptr<Log> GetInstance() {
+        static std::shared_ptr<Logger> GetInstance() {
             if (m_logInstance != nullptr) {
-                m_logInstance = std::make_shared<Log>();
+                m_logInstance = std::make_shared<Logger>();
             }
             return m_logInstance;
         }
@@ -48,13 +48,13 @@ class Log {
         void Log(const std::string &message, LOG_LEVEL level);
 
     private:
-        std::shared_ptr<Log> m_logInstance = nullptr;
+        static std::shared_ptr<Logger> m_logInstance;
         LOG_LEVEL m_logLevel;
         LOG_TYPE m_logType;
         std::fstream m_logFile;
         std::string m_name;
 };
 
-LogSPtr = std::shared_ptr<Log>;
+using LogSPtr = std::shared_ptr<Logger>;
 
 #endif
