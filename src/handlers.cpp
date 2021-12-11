@@ -45,6 +45,10 @@ extern "C"
       }
   }
 
+  void OnSetDefaults()
+  {
+  }
+
   void OnPreferences()
   {
       g_prefrences_dialog = std::make_shared<afm::graphic::PreferencesDialog>();

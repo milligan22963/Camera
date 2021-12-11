@@ -39,7 +39,7 @@ class Logger {
         virtual ~Logger();
 
         static std::shared_ptr<Logger> GetInstance() {
-            if (m_logInstance != nullptr) {
+            if (m_logInstance == nullptr) {
                 m_logInstance = std::make_shared<Logger>();
             }
             return m_logInstance;

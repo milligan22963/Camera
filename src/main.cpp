@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 
     LogSPtr pLog = Logger::GetInstance();
 
-    if (!pLog->InitializeLog(Logger::LOG_TYPE::LOG_FILE, "/var/log/camera.log", Logger::LOG_LEVEL::LOG_LEVEL_INFO)) {
+    if (!pLog->InitializeLog(Logger::LOG_TYPE::LOG_FILE, "/tmp/camera.log", Logger::LOG_LEVEL::LOG_LEVEL_INFO)) {
         std::cout << "Failed to setup log.\n";
     }
 

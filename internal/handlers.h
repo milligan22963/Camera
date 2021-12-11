@@ -15,6 +15,7 @@ extern "C"
   void OnAboutOK(GtkWidget *p_widget, gpointer data);
   void OnOK(GtkWidget *p_widget, gpointer data);
   void OnCancel(GtkWidget *p_widget, gpointer data);
+  void OnSetDefaults();
   void OnPreferences();
   void OnWindowMainDestroy();
 }
